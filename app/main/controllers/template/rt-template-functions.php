@@ -1879,7 +1879,7 @@ function rtmedia_album_edit( $options ) {
 			}
 			if ( $album_list ){
 
-				$options[ ] = '<a href="#rtmedia-merge" class="rtmedia-reveal-modal rtmedia-modal-link" title="' . __( 'Merge Album', 'rtmedia' ) . '"><i class="rtmicon-code-fork rtmicon-fw"></i>' . __( 'Merge Album', 'rtmedia' ) . '</a>';
+				$options[ ] = '<a href="#rtmedia-merge" class="rtmedia-reveal-modal rtmedia-modal-link" title="' . __( 'Merge Album', 'rtmedia' ) . '"><i class="dashicons dashicons-share rtmicon"></i>' . __( 'Merge Album', 'rtmedia' ) . '</a>';
 
 			}
 		}
@@ -2147,11 +2147,12 @@ function show_rtmedia_like_counts() {
 	$count   = get_rtmedia_like();
 	if ( ! ( isset( $options[ 'general_enableLikes' ] ) && $options[ 'general_enableLikes' ] == 0 ) ){
 		?>
-		<div class='rtmedia-like-info<?php if ( $count == 0 ){
-			echo " hide";
-		} ?>'><i class="rtmicon-thumbs-up rtmicon-fw"></i> <span
-				class="rtmedia-like-counter-wrap"><span
-					class="rtmedia-like-counter"><?php echo $count; ?></span> <?php _e( 'people like this', 'rtmedia' ); ?></span>
+		<div class='rtmedia-like-info<?php if ( $count == 0 ){ echo " hide"; } ?>'>
+			<i class="dashicons dashicons-arrow-up-alt2 rtmicon"></i>
+			<span class="rtmedia-like-counter-wrap">
+				<span class="rtmedia-like-counter"><?php echo $count; ?></span>
+				<?php _e( 'people like this', 'rtmedia' ); ?>
+			</span>
 		</div>
 	<?php
 	}

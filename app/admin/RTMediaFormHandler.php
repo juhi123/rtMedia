@@ -827,7 +827,7 @@ class RTMediaFormHandler {
                 <div class="columns large-3">
                     <?php call_user_func( $render_video_thumb['callback'], $render_video_thumb['args'] ); ?>
                     <span data-tooltip class="has-tip" title="<?php echo ( isset( $render_video_thumb['args']['desc'] ) ) ? $render_video_thumb['args']['desc'] : 'NA'; ?>">
-                        <i class="rtmicon-info-circle"></i>
+                        <i class="dashicons dashicons-info rtmicon"></i>
                     </span>
                 </div>
             </div>
@@ -857,7 +857,7 @@ class RTMediaFormHandler {
 			<div class="columns large-3">
 				<?php call_user_func( $render_jpeg_image_quality['callback'], $render_jpeg_image_quality['args'] ); ?>
 				<span data-tooltip class="has-tip" title="<?php echo ( isset( $render_jpeg_image_quality['args']['desc'] ) ) ? $render_jpeg_image_quality['args']['desc'] : 'NA'; ?>">
-					<i class="rtmicon-info-circle"></i>
+					<i class="dashicons dashicons-info rtmicon"></i>
 				</span>
 			</div>
 		</div>
