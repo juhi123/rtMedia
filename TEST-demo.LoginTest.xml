@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="demo.LoginTest" time="2.607" tests="1" errors="0" skipped="0" failures="1">
+<testsuite name="demo.LoginTest" time="1.812" tests="1" errors="0" skipped="0" failures="1">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-7-oracle/jre/lib/amd64"/>
@@ -59,7 +59,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="loginTest" classname="demo.LoginTest" time="2.607">
+  <testcase name="loginTest" classname="demo.LoginTest" time="1.812">
     <failure message="expected [true] but found [false]" type="java.lang.AssertionError">java.lang.AssertionError: expected [true] but found [false]
 	at org.testng.Assert.fail(Assert.java:94)
 	at org.testng.Assert.failNotEquals(Assert.java:494)
@@ -74,20 +74,20 @@ User_pass
 wp-submit
 Logged in failed
 ]]></system-out>
-    <system-err><![CDATA[Apr 28, 2015 11:30:23 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+    <system-err><![CDATA[Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
 INFO: executable: /usr/local/phantomjs/bin/phantomjs
-Apr 28, 2015 11:30:23 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
-INFO: port: 25611
-Apr 28, 2015 11:30:23 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
-INFO: arguments: [--webdriver=25611, --webdriver-logfile=/home/travis/build/juhi123/rtMedia/demo/target/phantomjsdriver.log]
-Apr 28, 2015 11:30:23 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+INFO: port: 9913
+Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+INFO: arguments: [--webdriver=9913, --webdriver-logfile=/home/travis/build/juhi123/rtMedia/demo/target/phantomjsdriver.log]
+Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
 INFO: environment: {}
 PhantomJS is launching GhostDriver...
-[INFO  - 2015-04-28T11:30:24.159Z] GhostDriver - Main - running on port 25611
-[INFO  - 2015-04-28T11:30:24.555Z] Session [f645db70-ed99-11e4-9d82-218350b3e560] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.9.8 Safari/534.34","webSecurityEnabled":true}
-[INFO  - 2015-04-28T11:30:24.555Z] Session [f645db70-ed99-11e4-9d82-218350b3e560] - page.customHeaders:  - {}
-[INFO  - 2015-04-28T11:30:24.555Z] Session [f645db70-ed99-11e4-9d82-218350b3e560] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"1.9.8","driverName":"ghostdriver","driverVersion":"1.1.0","platform":"linux-unknown-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
-[INFO  - 2015-04-28T11:30:24.555Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: f645db70-ed99-11e4-9d82-218350b3e560
+[INFO  - 2015-04-28T11:33:19.721Z] GhostDriver - Main - running on port 9913
+[INFO  - 2015-04-28T11:33:20.032Z] Session [5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.9.8 Safari/534.34","webSecurityEnabled":true}
+[INFO  - 2015-04-28T11:33:20.032Z] Session [5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0] - page.customHeaders:  - {}
+[INFO  - 2015-04-28T11:33:20.032Z] Session [5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"1.9.8","driverName":"ghostdriver","driverVersion":"1.1.0","platform":"linux-unknown-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2015-04-28T11:33:20.032Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0
 ]]></system-err>
   </testcase>
 </testsuite>
