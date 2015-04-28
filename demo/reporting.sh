@@ -14,8 +14,8 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
  
 
   #go into diractory and copy data we're interested in to that directory
+  git rm reporting/*
   cd reporting
-  git rm /*
   cp -Rf $HOME/reports/* .
  
 
