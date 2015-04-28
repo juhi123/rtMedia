@@ -7,4 +7,4 @@ before_script:
 script:
   - mvn test 
 
-after_failure: sh print_surefire_reports.sh
+after_script: sh print_surefire_reports.sh
