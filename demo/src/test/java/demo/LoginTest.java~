@@ -42,7 +42,7 @@ public class LoginTest {
 		wd.findElement(By.id("user_pass")).click();
 		System.out.println("User_pass");
 		wd.findElement(By.id("user_pass")).clear();
-		wd.findElement(By.id("user_pass")).sendKeys("rtcamp.com");
+		wd.findElement(By.id("user_pass")).sendKeys("rtcamp");
 		wd.findElement(By.id("wp-submit")).click();
 		System.out.println("wp-submit");
 		List<WebElement> errorElement = wd.findElements(By.id("login_error"));
