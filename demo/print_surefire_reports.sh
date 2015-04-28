@@ -25,7 +25,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
   #go into diractory and copy data we're interested in to that directory
   cd reporting
-  cp -Rf $HOME/travis/build/juhi123/rtMedia/demo/target/surefire-reports/* .
+  cp -Rf $HOME/build/juhi123/rtMedia/demo/target/surefire-reports/* .
 
   #add, commit and push files
   git add -f .
