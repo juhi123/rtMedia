@@ -11,11 +11,13 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
   #using token clone reporting branch
   git clone --quiet --branch=reporting https://${GH_TOKEN}@github.com/juhi123/rtMedia.git  reporting > /dev/null
-  git rm /*
+ 
 
   #go into diractory and copy data we're interested in to that directory
   cd reporting
+  git rm /*
   cp -Rf $HOME/reports/* .
+ 
 
   #add, commit and push files
   git add -f .
