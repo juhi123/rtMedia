@@ -1,20 +1,20 @@
 Configuring TestNG with: TestNG652Configurator
-Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+Apr 28, 2015 11:35:26 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
 INFO: executable: /usr/local/phantomjs/bin/phantomjs
-Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
-INFO: port: 9913
-Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
-INFO: arguments: [--webdriver=9913, --webdriver-logfile=/home/travis/build/juhi123/rtMedia/demo/target/phantomjsdriver.log]
-Apr 28, 2015 11:33:18 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+Apr 28, 2015 11:35:26 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+INFO: port: 14734
+Apr 28, 2015 11:35:26 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
+INFO: arguments: [--webdriver=14734, --webdriver-logfile=/home/travis/build/juhi123/rtMedia/demo/target/phantomjsdriver.log]
+Apr 28, 2015 11:35:26 AM org.openqa.selenium.phantomjs.PhantomJSDriverService <init>
 INFO: environment: {}
 PhantomJS is launching GhostDriver...
-[INFO  - 2015-04-28T11:33:19.721Z] GhostDriver - Main - running on port 9913
-[INFO  - 2015-04-28T11:33:20.032Z] Session [5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.9.8 Safari/534.34","webSecurityEnabled":true}
-[INFO  - 2015-04-28T11:33:20.032Z] Session [5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0] - page.customHeaders:  - {}
-[INFO  - 2015-04-28T11:33:20.032Z] Session [5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"1.9.8","driverName":"ghostdriver","driverVersion":"1.1.0","platform":"linux-unknown-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
-[INFO  - 2015-04-28T11:33:20.032Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 5edd85c0-ed9a-11e4-bdae-4bd9b4de07a0
+[INFO  - 2015-04-28T11:35:26.716Z] GhostDriver - Main - running on port 14734
+[INFO  - 2015-04-28T11:35:27.100Z] Session [aa9ab690-ed9a-11e4-b250-8f665b6464db] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.9.8 Safari/534.34","webSecurityEnabled":true}
+[INFO  - 2015-04-28T11:35:27.100Z] Session [aa9ab690-ed9a-11e4-b250-8f665b6464db] - page.customHeaders:  - {}
+[INFO  - 2015-04-28T11:35:27.100Z] Session [aa9ab690-ed9a-11e4-b250-8f665b6464db] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"1.9.8","driverName":"ghostdriver","driverVersion":"1.1.0","platform":"linux-unknown-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2015-04-28T11:35:27.100Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: aa9ab690-ed9a-11e4-b250-8f665b6464db
 User_login
 User_pass
 wp-submit
 Logged in failed
-[INFO  - 2015-04-28T11:33:22.005Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2015-04-28T11:35:28.859Z] ShutdownReqHand - _handle - About to shutdown
