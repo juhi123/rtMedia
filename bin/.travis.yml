@@ -4,7 +4,9 @@ before_script:
 - cd /home/travis/build/juhi123/rtMedia/demo
 script:
 - mvn test
-after_script: sh print_surefire_reports.sh
+after_script: 
+-sh print_surefire_reports.sh
+-reporting.sh
 env:
   global:
     secure: I/iBuOLoqcLC20s+AGebhY8xEnLt2gzzyo/s5CPujXuvtY7LIMzIjEWfZItIwse3EeaDrTeAS8WBmKZZ3MPAV5hmkszp2NXT/I49EAp70jp/TleTZxGCcqqqR8Viv7ds6i2GJmrDNx/F7tKkV3R4mJrZ74zpRxO7e9mPY6j3yfs=
