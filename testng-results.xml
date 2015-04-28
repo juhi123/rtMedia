@@ -5,16 +5,16 @@
       <![CDATA[Logged in failed]]>
     </line>
   </reporter-output>
-  <suite name="Surefire suite" duration-ms="3418" started-at="2015-04-28T09:42:06Z" finished-at="2015-04-28T09:42:09Z">
+  <suite name="Surefire suite" duration-ms="4306" started-at="2015-04-28T11:30:23Z" finished-at="2015-04-28T11:30:27Z">
     <groups>
     </groups>
-    <test name="Surefire test" duration-ms="3418" started-at="2015-04-28T09:42:06Z" finished-at="2015-04-28T09:42:09Z">
+    <test name="Surefire test" duration-ms="4306" started-at="2015-04-28T11:30:23Z" finished-at="2015-04-28T11:30:27Z">
       <class name="demo.LoginTest">
-        <test-method status="PASS" signature="setUp()[pri:0, instance:demo.LoginTest@74cbe891]" name="setUp" is-config="true" duration-ms="1203" started-at="2015-04-28T09:42:06Z" finished-at="2015-04-28T09:42:07Z">
+        <test-method status="PASS" signature="setUp()[pri:0, instance:demo.LoginTest@7711c37e]" name="setUp" is-config="true" duration-ms="1075" started-at="2015-04-28T11:30:23Z" finished-at="2015-04-28T11:30:24Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method status="FAIL" signature="loginTest()[pri:0, instance:demo.LoginTest@74cbe891]" name="loginTest" duration-ms="1604" started-at="2015-04-28T09:42:07Z" finished-at="2015-04-28T09:42:08Z">
+        <test-method status="FAIL" signature="loginTest()[pri:0, instance:demo.LoginTest@7711c37e]" name="loginTest" duration-ms="2605" started-at="2015-04-28T11:30:24Z" finished-at="2015-04-28T11:30:27Z">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[expected [true] but found [false]]]>
@@ -64,7 +64,7 @@
             </line>
           </reporter-output>
         </test-method> <!-- loginTest -->
-        <test-method status="PASS" signature="tearDown()[pri:0, instance:demo.LoginTest@74cbe891]" name="tearDown" is-config="true" duration-ms="598" started-at="2015-04-28T09:42:08Z" finished-at="2015-04-28T09:42:09Z">
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:demo.LoginTest@7711c37e]" name="tearDown" is-config="true" duration-ms="613" started-at="2015-04-28T11:30:27Z" finished-at="2015-04-28T11:30:27Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
