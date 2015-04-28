@@ -13,7 +13,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo -e "Starting to update reporting\n"
 
   #copy data we're interested in to other place
-  cp -R coverage /home/travis/build/juhi123/rtMedia/demo/target/surefire-reports
+  cp -R coverage $HOME/build/juhi123/rtMedia/demo/target/surefire-reports
 
   #go to home and setup git
   cd $HOME
@@ -25,7 +25,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
   #go into diractory and copy data we're interested in to that directory
   cd reporting
-  cp -Rf /home/travis/build/juhi123/rtMedia/demo/target/surefire-reports/* .
+  cp -Rf $HOME/travis/build/juhi123/rtMedia/demo/target/surefire-reports/* .
 
   #add, commit and push files
   git add -f .
