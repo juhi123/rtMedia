@@ -1,13 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: demo.LoginTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3.623 sec <<< FAILURE! - in demo.LoginTest
-loginTest(demo.LoginTest)  Time elapsed: 1.61 sec  <<< FAILURE!
-java.lang.AssertionError: expected [true] but found [false]
-	at org.testng.Assert.fail(Assert.java:94)
-	at org.testng.Assert.failNotEquals(Assert.java:494)
-	at org.testng.Assert.assertEquals(Assert.java:123)
-	at org.testng.Assert.assertEquals(Assert.java:286)
-	at org.testng.Assert.assertEquals(Assert.java:296)
-	at demo.LoginTest.loginTest(LoginTest.java:60)
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.545 sec - in demo.LoginTest
