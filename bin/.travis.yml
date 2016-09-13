@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 sudo: required
 
 language: node_js
@@ -49,3 +50,22 @@ before_script:
 script:
 - xvfb-run --server-args="-screen 0, 1624x1068x24" nightwatch --test res/setup.js
 - xvfb-run --server-args="-screen 0, 1624x1068x24" nightwatch --group src/
+=======
+language: 
+  - java
+
+after_script: 
+  - print_surefire_report.sh
+  - reporting.sh
+
+before_script: 
+  - "cd /home/travis/build/juhi123/rtMedia/demo"
+
+env: 
+  global: 
+    secure: I/iBuOLoqcLC20s+AGebhY8xEnLt2gzzyo/s5CPujXuvtY7LIMzIjEWfZItIwse3EeaDrTeAS8WBmKZZ3MPAV5hmkszp2NXT/I49EAp70jp/TleTZxGCcqqqR8Viv7ds6i2GJmrDNx/F7tKkV3R4mJrZ74zpRxO7e9mPY6j3yfs=
+
+script: 
+  - "mvn test"
+
+>>>>>>> 5d13cabeb87dff9b0c9186cdb6fc45b4aa0b3622
