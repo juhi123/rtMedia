@@ -108,7 +108,7 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 				$this,
 				'rtmedia_hide_social_sync_notice',
 			), 1 );
-			add_action( 'wp_ajax_rtmedia_hide_pro_split_notice', array( $this, 'rtmedia_hide_pro_split_notice' ), 1 );
+			add_action( 'wp_ajax_rtmedia_hide_premium_addon_notice', array( $this, 'rtmedia_hide_premium_addon_notice' ), 1 );
 
 			new RTMediaMediaSizeImporter(); // do not delete this line. We only need to create object of this class if we are in admin section
 			if ( class_exists( 'BuddyPress' ) ) {
@@ -122,6 +122,9 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ), 10, 1 );
 
 			add_action( 'admin_footer', array( $this, 'rtm_admin_templates' ) );
+
+			// Display invalid add-on license notices to admins.
+			add_action( 'admin_notices', array( $this, 'rtm_addon_license_notice' ) );
 		}
 
 		/**
@@ -179,6 +182,27 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 				include $filename;
 				echo '</script>';
 			}
+
+			$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+			if ( ! empty( $page ) && 'rtmedia-settings' === $page ) {
+				/**
+				 * Filter is use to enable comment option in side the media that are being uploaded in the comment section.
+				 *
+				 * @since 4.3
+				 *
+				 * @param True to hide the option and false to show the option.
+				 */
+				$display = apply_filters( 'rtmedia_disable_media_in_commented_media', true );
+				if ( $display ) { ?>
+					<style type="text/css">
+						.rtm-option-wrapper .form-table[data-depends="buddypress_enableOnComment"] {
+						    display: none !important;
+						}
+					</style>
+					<?php
+				}
+			}
 		}
 
 		function modify_medialibrary_permalink( $action, $post ) {
@@ -233,11 +257,7 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 
 				if ( ! is_rtmedia_vip_plugin() ) {
 					$this->rtmedia_inspirebook_release_notice();
-					$this->rtmedia_social_sync_release_notice();
-
-					if ( ! defined( 'RTMEDIA_PRO_PATH' ) ) {
-						$this->rtmedia_pro_split_release_notice();
-					}
+					$this->rtmedia_premium_addon_notice();
 				}
 			}
 		}
@@ -245,28 +265,32 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 		/*
 		 * rtMedia Pro split release admin notice
 		 */
-		public function rtmedia_pro_split_release_notice() {
-			$site_option = rtmedia_get_site_option( 'rtmedia_pro_split_release_notice' );
+		public function rtmedia_premium_addon_notice() {
+			$site_option = rtmedia_get_site_option( 'rtmedia_premium_addon_notice' );
 
 			if ( ( ! $site_option || 'hide' !== $site_option ) ) {
-				rtmedia_update_site_option( 'rtmedia_pro_split_release_notice', 'show' );
+				rtmedia_update_site_option( 'rtmedia_premium_addon_notice', 'show' );
 				?>
 				<div class="updated rtmedia-pro-split-notice">
 					<p>
 						<span>
+							<?php
+								$product_page = 'https://rtmedia.io/products/?utm_source=dashboard&utm_medium=plugin&utm_campaign=buddypress-media';
+								$message = sprintf(
+									__( 'Check 30+ premium rtMedia add-ons on our <a href="%s">store</a>.', 'buddypress-media' ), $product_page
+								);
+							?>
 							<b><?php esc_html_e( 'rtMedia: ', 'buddypress-media' ); ?></b>
-							<?php esc_html_e( 'We have released 30+ premium add-ons for rtMedia plugin. Read more about it ', 'buddypress-media' ); ?>
-							<a href="https://rtmedia.io/blog/rtmedia-pro-splitting-major-change/?utm_source=dashboard&utm_medium=plugin&utm_campaign=buddypress-media"
-							   target="_blank"><?php esc_html_e( 'here', 'buddypress-media' ) ?></a>.
+							<?php echo $message; ?>
 						</span>
 						<a href="#"
-						   onclick="rtmedia_hide_pro_split_notice('<?php echo esc_js( wp_create_nonce( 'rtcamp_pro_split' ) ); ?>');"
+						   onclick="rtmedia_hide_premium_addon_notice('<?php echo esc_js( wp_create_nonce( 'rtcamp_pro_split' ) ); ?>');"
 						   style="float:right">Dismiss</a>
 					</p>
 				</div>
 				<script type="text/javascript">
-					function rtmedia_hide_pro_split_notice(nonce) {
-						var data = {action: 'rtmedia_hide_pro_split_notice', _rtm_nonce: nonce };
+					function rtmedia_hide_premium_addon_notice(nonce) {
+						var data = {action: 'rtmedia_hide_premium_addon_notice', _rtm_nonce: nonce };
 						jQuery.post(ajaxurl, data, function (response) {
 							response = response.trim();
 
@@ -283,62 +307,8 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 		 * Hide pro split release notice
 		 */
 
-		function rtmedia_hide_pro_split_notice() {
-			if ( check_ajax_referer( 'rtcamp_pro_split', '_rtm_nonce' ) && rtmedia_update_site_option( 'rtmedia_pro_split_release_notice', 'hide' ) ) {
-				echo '1';
-			} else {
-				echo '0';
-			}
-			die();
-		}
-
-		/*
-		 *  Show social sync release notice admin notice.
-		 */
-
-		function rtmedia_social_sync_release_notice() {
-			$site_option                         = rtmedia_get_site_option( 'rtmedia_social_sync_release_notice' );
-			$check_rtmedia_social_sync_installed = file_exists( trailingslashit( WP_PLUGIN_DIR ) . 'rtmedia-social-sync/index.php' );
-
-			if ( ( ! $site_option || 'hide' !== $site_option ) && ! $check_rtmedia_social_sync_installed ) {
-				rtmedia_update_site_option( 'rtmedia_social_sync_release_notice', 'show' );
-				?>
-				<div class="updated rtmedia-social-sync-notice">
-					<p>
-						<span>
-						    <b><?php esc_html_e( 'rtMedia: ', 'buddypress-media' ); ?></b>
-							<?php esc_html_e( 'Meet ', 'buddypress-media' ); ?>
-							<a href="https://rtmedia.io/products/rtmedia-social-sync/?utm_source=dashboard&utm_medium=plugin&utm_campaign=buddypress-media"
-							   target="_blank">
-								<b><?php esc_html_e( 'rtMedia Social Sync', 'buddypress-media' ) ?></b>
-							</a>
-							<?php esc_html_e( ' which allows you to import media from your Facebook account.', 'buddypress-media' ); ?>
-						</span>
-						<a href="#"
-						   onclick="rtmedia_hide_social_sync_notice('<?php echo esc_js( wp_create_nonce( 'social_sync' ) ); ?>')"
-						   style="float:right">Dismiss</a>
-					</p>
-				</div>
-				<script type="text/javascript">
-					function rtmedia_hide_social_sync_notice(nonce) {
-						var data = {action: 'rtmedia_hide_social_sync_notice', _rtm_nonce: nonce};
-						jQuery.post(ajaxurl, data, function (response) {
-							response = response.trim();
-							if (response === "1")
-								jQuery('.rtmedia-social-sync-notice').remove();
-						});
-					}
-				</script>
-				<?php
-			}
-		}
-
-		/*
-		 * Hide social sync release notice
-		 */
-
-		function rtmedia_hide_social_sync_notice() {
-			if ( check_ajax_referer( 'social_sync', '_rtm_nonce' ) && rtmedia_update_site_option( 'rtmedia_social_sync_release_notice', 'hide' ) ) {
+		function rtmedia_hide_premium_addon_notice() {
+			if ( check_ajax_referer( 'rtcamp_pro_split', '_rtm_nonce' ) && rtmedia_update_site_option( 'rtmedia_premium_addon_notice', 'hide' ) ) {
 				echo '1';
 			} else {
 				echo '0';
@@ -914,11 +884,12 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 				wp_localize_script( 'rtmedia-admin', 'rtmedia_off_label', esc_html__( 'OFF', 'buddypress-media' ) );
 				wp_localize_script( 'rtmedia-admin', 'rtmedia_admin_ajax', $admin_ajax );
 				wp_localize_script( 'rtmedia-admin', 'rtmedia_admin_url', admin_url() );
-				wp_localize_script( 'rtmedia-admin', 'rtmedia_admin_url', admin_url() );
+				/* path for file upload using ajax */
+				wp_localize_script( 'rtmedia-admin', 'rtmedia_fileupload_url', RTMEDIA_URL.'app/helper/rtUploadAttachment.php' );
 
 				$rtmedia_admin_strings = array(
 					'no_refresh'           	  		=> esc_html__( 'Please do not refresh this page.', 'buddypress-media' ),
-					'something_went_wrong' 	  		=> esc_html__( 'Something went wrong. Please ', 'buddypress-media' ) .  '<a href onclick="location.reload();">' . esc_html__( 'refresh', 'buddypress-media' ) . '</a>' . esc_html__( ' page.', 'buddypress-media' ),
+					'something_went_wrong' 	  		=> esc_html__( 'Something went wrong. Please ', 'buddypress-media' ) . '<a href onclick="location.reload();">' . esc_html__( 'refresh', 'buddypress-media' ) . '</a>' . esc_html__( ' page.', 'buddypress-media' ),
 					'are_you_sure'         	  		=> esc_html__( 'This will subscribe you to the free plan.', 'buddypress-media' ),
 					'disable_encoding'     	  		=> esc_html__( 'Are you sure you want to disable the encoding service?', 'buddypress-media' ),
 					'enable_encoding'      	  		=> esc_html__( 'Are you sure you want to enable the encoding service?', 'buddypress-media' ),
@@ -931,6 +902,7 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 					'per_page_media_negative_value'	=> esc_html__( 'Please enter positive integer value only. Setting number of media per page value to default value 10.', 'buddypress-media' ),
 					'per_page_media_positive_error'	=> esc_html__( 'Please enter positive integer value only. Setting number of media per page value to round value', 'buddypress-media' ),
 					'request_failed'				=> esc_html__( 'Request failed.', 'buddypress-media' ),
+					'wrong_css_input'				=> esc_html__( 'You can not use @import statement in custom css', 'buddypress-media' ),
 				);
 
 				wp_localize_script( 'rtmedia-admin', 'rtmedia_admin_strings', $rtmedia_admin_strings );
@@ -1216,9 +1188,9 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 
 								<div class="rtm-button-container bottom">
 									<div class="rtm-social-links alignleft">
-										<a href="http://twitter.com/rtcamp" class="twitter" target="_blank"><span
+										<a href="http://twitter.com/rtMediaWP" class="twitter" target="_blank"><span
 												class="dashicons dashicons-twitter"></span></a>
-										<a href="https://www.facebook.com/rtCamp.solutions" class="facebook"
+										<a href="https://www.facebook.com/rtmediawp" class="facebook"
 										   target="_blank"><span class="dashicons dashicons-facebook"></span></a>
 										<a href="http://profiles.wordpress.org/rtcamp" class="wordpress"
 										   target="_blank"><span class="dashicons dashicons-wordpress"></span></a>
@@ -1529,7 +1501,7 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 			$addons       = '<div id="social" class="rtm-social-share">
 							<p><a href="http://twitter.com/home/?status=' . esc_attr( $message ) . '" class="button twitter" target= "_blank" title="' . esc_attr__( 'Post to Twitter Now', 'buddypress-media' ) . '">' . esc_html__( 'Post to Twitter', 'buddypress-media' ) . '<span class="dashicons dashicons-twitter"></span></a></p>
 							<p><a href="https://www.facebook.com/sharer/sharer.php?u=https://rtmedia.io/" class="button facebook" target="_blank" title="' . esc_attr__( 'Share on Facebook Now', 'buddypress-media' ) . '">' . esc_html__( 'Share on Facebook', 'buddypress-media' ) . '<span class="dashicons dashicons-facebook"></span></a></p>
-							<p><a href="http://wordpress.org/support/view/plugin-reviews/buddypress-media?rate=5#postform" class="button wordpress" target= "_blank" title="' . esc_attr__( 'Rate rtMedia on Wordpress.org', 'buddypress-media' ) . '">' . esc_html__( 'Rate on Wordpress.org', 'buddypress-media' ) . '<span class="dashicons dashicons-wordpress"></span></a></p>
+							<p><a href="https://wordpress.org/support/plugin/buddypress-media/reviews/#new-post" class="button wordpress" target= "_blank" title="' . esc_attr__( 'Rate rtMedia on Wordpress.org', 'buddypress-media' ) . '">' . esc_html__( 'Rate on Wordpress.org', 'buddypress-media' ) . '<span class="dashicons dashicons-wordpress"></span></a></p>
 							<p><a href="' . sprintf( '%s', 'https://rtmedia.io/feed/' ) . '" class="button rss" target="_blank" title="' . esc_attr__( 'Subscribe to our Feeds', 'buddypress-media' ) . '">' . esc_html__( 'Subscribe to our Feeds', 'buddypress-media' ) . '<span class="dashicons dashicons-rss"></span></a></p>
 							</div>';
 
@@ -1718,7 +1690,7 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 			if ( ! $site_option || 'hide' !== $site_option ) {
 				rtmedia_update_site_option( 'rtmedia-update-template-notice-v3_9_4', 'show' );
 				if ( is_dir( get_template_directory() . '/rtmedia' ) ) {
-					echo '<div class="error rtmedia-update-template-notice"><p>' . esc_html__( 'Please update rtMedia template files if you have overridden the default rtMedia templates in your theme. If not, you can ignore and hide this notice.', 'buddypress-media' ) . '<a href="#" onclick="rtmedia_hide_template_override_notice(\''.esc_js( wp_create_nonce( 'rtmedia_template_notice' ) ).'\')" style="float:right">' . esc_html__( 'Hide', 'buddypress-media' ) . '</a></p></div>';
+					echo '<div class="error rtmedia-update-template-notice"><p>' . esc_html__( 'Please update rtMedia template files if you have overridden the default rtMedia templates in your theme. If not, you can ignore and hide this notice.', 'buddypress-media' ) . '<a href="#" onclick="rtmedia_hide_template_override_notice(\'' . esc_js( wp_create_nonce( 'rtmedia_template_notice' ) ) . '\')" style="float:right">' . esc_html__( 'Hide', 'buddypress-media' ) . '</a></p></div>';
 					?>
 					<script type="text/javascript">
 						function rtmedia_hide_template_override_notice( rtmedia_template_notice_nonce ) {
@@ -1772,7 +1744,10 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 					foreach ( $sub_tabs as $tab ) {
 
 						// tab status
-						$active_class = '';
+						$active_class = $error_class = '';
+						if ( ! empty( $tab['args'] ) && ( empty( $tab['args']['status'] ) || 'valid' !== $tab['args']['status'] ) ) {
+							$error_class = 'error';
+						}
 						if ( 1 === $i ) {
 							$active_class = 'active';
 						}
@@ -1783,7 +1758,7 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 							$icon = '<i class="' . esc_attr( $tab['icon'] ) . ' dashicons rtmicon"></i>';
 						}
 						?>
-						<li class="<?php echo esc_attr( $active_class ) ?>">
+						<li class="<?php echo esc_attr( $active_class ) ?> <?php echo esc_attr( $error_class ) ?>">
 							<a id="tab-<?php echo esc_attr( substr( $tab['href'], 1 ) ) ?>" title="<?php echo esc_attr( $tab['title'] ); ?>"
 							   href="<?php echo esc_url( $tab['href'] ); ?>"
 							   class="rtmedia-tab-title <?php echo esc_attr( sanitize_title( $tab['name'] ) ); ?>">
@@ -1840,6 +1815,45 @@ if ( ! class_exists( 'RTMediaAdmin' ) ) {
 			}
 
 			return $removable_query_args;
+		}
+
+		/**
+		 * Display invlaid license notice to admins.
+		 *
+		 * @since 4.1.7
+		 *
+		 * @return  void
+		 */
+		function rtm_addon_license_notice() {
+
+			if ( ! empty( $_GET['page'] ) && 'rtmedia-license' === $_GET['page'] ) {
+				$my_account = 'https://rtmedia.io/my-account';
+				$license_doc = 'https://rtmedia.io/docs/license/';
+				$message = sprintf(
+					__( 'Your license keys can be found on <a href="%s">my-account</a> page. For more details, please refer to <a href="%s">License documentation</a> page.', 'buddypress-media' ),
+					$my_account, $license_doc
+				);
+				echo '<div class="notice"><p>' . $message . '</p></div>';
+				return;
+			}
+
+			$addons = apply_filters( 'rtmedia_license_tabs', array() );
+
+			if ( empty( $addons ) ) {
+				return;
+			}
+
+			$message = '';
+			foreach ( $addons as $addon ) {
+				if ( empty( $addon['args']['status'] ) || 'valid' !== $addon['args']['status'] ) {
+					$message = sprintf(
+						__( 'We found an invalid or expired license key for an rtMedia add-on. Please go to the <a href="%s">Licenses page</a> to fix this issue.', 'buddypress-media' ),
+						admin_url( 'admin.php?page=rtmedia-license' )
+					);
+					echo '<div class="error"><p>' . $message . '</p></div>';
+					break;
+				}
+			}
 		}
 	}
 

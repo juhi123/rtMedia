@@ -25,6 +25,7 @@ class RTMediaGalleryShortcode {
 		add_action( 'wp_ajax_nopriv_rtmedia_get_template', array( &$this, 'ajax_rtmedia_get_template' ) );
 	}
 
+	// get template for json response
 	function ajax_rtmedia_get_template() {
 		$template = '';
 		if ( isset( $_REQUEST['template'] ) ) {
@@ -47,28 +48,25 @@ class RTMediaGalleryShortcode {
 		), RTMEDIA_VERSION, true );
 
 		if ( is_rtmedia_album_gallery() ) {
-			$template_url = esc_url( add_query_arg( array(
+
+			$album_template_args = apply_filters( 'album_template_args', array(
 				'action'   => 'rtmedia_get_template',
 				'template' => 'album-gallery-item',
-			), admin_url( 'admin-ajax.php' ) ), null, '' );
+			) );
+
+			$template_url = esc_url( add_query_arg( $album_template_args, admin_url( 'admin-ajax.php' ) ), null, '' );
 		} else {
-			$template_url = esc_url( add_query_arg( array(
+
+			$media_template_args = apply_filters( 'media_template_args', array(
 				'action'   => 'rtmedia_get_template',
 				'template' => apply_filters( 'rtmedia_backbone_template_filter', 'media-gallery-item' ),
-			), admin_url( 'admin-ajax.php' ) ), null, '' );
+			) );
+
+			$template_url = esc_url( add_query_arg( $media_template_args, admin_url( 'admin-ajax.php' ) ), null, '' );
 		}
 		wp_localize_script( 'rtmedia-backbone', 'template_url', $template_url );
 		$request_uri = rtm_get_server_var( 'REQUEST_URI', 'FILTER_SANITIZE_URL' );
-		$url          = trailingslashit( $request_uri );
-		$rtmedia_slug = '/' . RTMEDIA_MEDIA_SLUG;
-		// check position of media slug from end of the URL
-		if ( strrpos( $url, $rtmedia_slug ) !== false ) {
-			// split the url upto the last occurance of media slug
-			$url_upload = substr( $url, 0, strrpos( $url, $rtmedia_slug ) );
-			$url        = trailingslashit( $url_upload ) . 'upload/';
-		} else {
-			$url = trailingslashit( $url ) . 'upload/';
-		}
+		$url         = rtmedia_get_upload_url( $request_uri );
 
 		$params = array(
 			'url'                 => $url,
@@ -101,22 +99,10 @@ class RTMediaGalleryShortcode {
 				ini_get( 'post_max_size' ),
 			) ) ),
 		);
-		if ( wp_is_mobile() ) {
-			$params['multi_selection'] = false;
-		}
 
 		$params = apply_filters( 'rtmedia_modify_upload_params', $params );
 
-		global $rtmedia;
-		$rtmedia_extns = array();
-
-		foreach ( $rtmedia->allowed_types as $allowed_types_key => $allowed_types_value ) {
-			$rtmedia_extns[ $allowed_types_key ] = $allowed_types_value['extn'];
-		}
-
-		wp_localize_script( 'rtmedia-backbone', 'rtmedia_exteansions', $rtmedia_extns );
 		wp_localize_script( 'rtmedia-backbone', 'rtMedia_plupload_config', $params );
-		wp_localize_script( 'rtmedia-backbone', 'rMedia_loading_file', admin_url( '/images/loading.gif' ) );
 	}
 
 	/**
@@ -150,8 +136,14 @@ class RTMediaGalleryShortcode {
 				$attr = true;
 			}
 
-			$attr = array( 'name' => 'gallery', 'attr' => $attr );
-			global $post;
+			$attr = array(
+				'name' => 'gallery',
+				'attr' => $attr,
+			);
+
+			$attr = apply_filters( 'rtmedia_gallery_shortcode_parameter_pre_filter', $attr );
+
+			global $post, $rtmedia_shortcode_attr;
 			if ( isset( $attr ) && isset( $attr['attr'] ) ) {
 				if ( ! is_array( $attr['attr'] ) ) {
 					$attr['attr'] = array();
@@ -188,6 +180,40 @@ class RTMediaGalleryShortcode {
 				if ( ! isset( $attr['attr']['context'] ) && isset( $post->post_type ) ) {
 					$attr['attr']['context'] = $post->post_type;
 				}
+			}// End if().
+
+			$rtmedia_shortcode_attr = $attr['attr'];
+
+			// Set template according to media type
+			if ( is_rtmedia_album_gallery() || ( isset( $attr['attr']['media_type'] ) && 'album' === $attr['attr']['media_type'] ) ) {
+
+				$album_template_args = apply_filters( 'album_template_args', array(
+					'action'   => 'rtmedia_get_template',
+					'template' => 'album-gallery-item',
+				) );
+
+				$template_url = esc_url( add_query_arg( $album_template_args, admin_url( 'admin-ajax.php' ) ), null, '' );
+			} else {
+
+				$media_template_args = apply_filters( 'media_template_args', array(
+					'action'   => 'rtmedia_get_template',
+					'template' => apply_filters( 'rtmedia_backbone_template_filter', 'media-gallery-item' ),
+				) );
+
+				$template_url = esc_url( add_query_arg( $media_template_args, admin_url( 'admin-ajax.php' ) ), null, '' );
+			}
+			wp_localize_script( 'rtmedia-backbone', 'template_url', $template_url );
+
+			/**
+			 * Remove search_filter paramater from attr,
+			 * Reason: Showing error on Database Errors [ SQL Query ]
+			 * Solution: Unset search_filter parameter store value on another variable.
+			 */
+			if ( isset( $attr['attr']['search_filter'] ) ) {
+				if ( 'true' === $attr['attr']['search_filter'] ) {
+					$search_filter_status = $attr['attr']['search_filter'];
+					unset( $attr['attr']['search_filter'] );
+				}
 			}
 
 			if ( $authorized_member ) {  // if current user has access to view the gallery (when context is 'group')
@@ -195,30 +221,60 @@ class RTMediaGalleryShortcode {
 				if ( ! $rtmedia_query ) {
 					$rtmedia_query = new RTMediaQuery( $attr['attr'] );
 				}
+				do_action( 'rtmedia_shortcode_action', $attr['attr'] );// do extra stuff with attributes
+				$page_number = ( get_query_var( 'pg' ) ) ? get_query_var( 'pg' ) : 1; // get page number
+				$rtmedia_query->action_query->page = intval( $page_number );
 				$rtmedia_query->is_gallery_shortcode = true;// to check if gallery shortcode is executed to display the gallery.
 
 				$template         = new RTMediaTemplate();
 				$gallery_template = false;
-				if ( isset( $attr['attr']['global'] ) && true === $attr['attr']['global'] ) {
+				if ( isset( $attr['attr']['global'] ) && true === (bool) $attr['attr']['global'] ) {
 					add_filter( 'rtmedia-model-where-query', array(
 						'RTMediaGalleryShortcode',
 						'rtmedia_query_where_filter',
 					), 10, 3 );
 				}
+
+				$attr['attr']['hide_comment_media'] = false;
+				$remove_comment_media = apply_filters( 'rtmedia_query_where_filter_remove_comment_media', true, 'galleryshortcode' );
+				if ( isset( $remove_comment_media ) && ! empty( $remove_comment_media ) ) {
+					add_filter( 'rtmedia-model-where-query', array( 'RTMediaGalleryShortcode', 'rtmedia_query_where_filter_remove_comment_media' ), 11, 3 );
+					$attr['attr']['hide_comment_media'] = true;
+				}
+
+				/**
+				 * Set search_filter into attr array, if set search_filter parameter in shortcode.
+				 */
+				if ( isset( $search_filter_status ) ) {
+					$attr['attr']['search_filter'] = $search_filter_status;
+				}
+
 				$template->set_template( $gallery_template, $attr );
-				if ( isset( $attr['attr']['global'] ) && true === $attr['attr']['global'] ) {
+
+				if ( isset( $remove_comment_media ) && ! empty( $remove_comment_media ) ) {
+					remove_filter( 'rtmedia-model-where-query', array( 'RTMediaGalleryShortcode', 'rtmedia_query_where_filter_remove_comment_media' ), 11 );
+				}
+
+				if ( isset( $attr['attr']['global'] ) && true === (bool) $attr['attr']['global'] ) {
 					remove_filter( 'rtmedia-model-where-query', array(
 						'RTMediaGalleryShortcode',
 						'rtmedia_query_where_filter',
 					), 10, 3 );
-				}
+				}// End if().
 			} else { //if user cannot view the media gallery (when context is 'group'), show message
 				esc_html_e( 'You do not have sufficient privileges to view this gallery', 'buddypress-media' );
 				return false;
-			}
-
+			}// End if().
 			return ob_get_clean();
+		}// End if().
+	}
+
+	// for gallery shortcode remove all comment media reply
+	static function rtmedia_query_where_filter_remove_comment_media( $where, $table_name, $join ) {
+		if ( function_exists( 'rtmedia_query_where_filter_remove_comment_media' ) ) {
+			$where = rtmedia_query_where_filter_remove_comment_media( $where, $table_name, $join );
 		}
+		return $where;
 	}
 
 	// for gallery shortcode having attribute global as true, include all media except ones having context as "group"

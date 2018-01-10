@@ -1,13 +1,28 @@
 <div class="rtmedia-container rtmedia-single-container">
 	<div class="rtm-lightbox-container clearfix">
 		<?php
-		global $rt_ajax_request;
+		global $rt_ajax_request, $rtmedia;
 		do_action( 'rtmedia_before_media' );
 
 		if ( have_rtmedia() ) : rtmedia();
 
 			global $rtmedia_media;
 			$type = ! empty( $rtmedia_media->media_type ) ? $rtmedia_media->media_type : 'none';
+			$class = '';
+
+			$if_comments_enable = isset( $rtmedia->options['general_enableComments'] ) ? $rtmedia->options['general_enableComments'] : 0;
+
+			// Count of likes.
+			if ( isset( $rtmedia_media->likes ) ) {
+				$count = intval( $rtmedia_media->likes );
+			} else {
+				$count = 0;
+			}
+
+			// Add hide class to this element when "comment on media" is not enabled.
+			if ( ! intval( $count ) && '0' === $if_comments_enable ) {
+				$class = 'hide';
+			}
 			?>
 			<div id="rtmedia-single-media-container"
 			     class="rtmedia-single-media rtm-single-media rtm-media-type-<?php echo esc_attr( $type ); ?>">
@@ -19,10 +34,16 @@
 					<div class="rtmedia-media"
 					     id="rtmedia-media-<?php echo esc_attr( rtmedia_id() ); ?>"><?php rtmedia_media( true ); ?></div>
 
+						<?php
+							/**
+							 * call function to display single media pagination
+							 * By: Yahil
+							 */
+						  	rtmedia_single_media_pagination();
+						?>
 				<?php } else { ?>
 
-					<span class="mfp-arrow mfp-arrow-left mfp-prevent-close rtm-lightbox-arrows" type="button"
-					      title="Previous Media"></span>
+					<span class="mfp-arrow mfp-arrow-left mfp-prevent-close rtm-lightbox-arrows" type="button" title="Previous Media"></span>
 					<span class="mfp-arrow mfp-arrow-right mfp-prevent-close" type="button" title="Next Media"></span>
 
 					<div class="rtmedia-media"
@@ -38,7 +59,7 @@
 
 							<?php if ( rtmedia_album_name() ) { ?>
 								<span class="rtmedia-album-name">
-									<span>&nbsp;<?php esc_html_e( 'under', 'buddypress-media' ); ?></span>
+									<span>&nbsp;<?php echo $media_under = apply_filters( 'rtmedia_update_under_album_text', esc_html__( 'under', 'buddypress-media' ) ); ?></span>
 									<a href="<?php rtmedia_album_permalink(); ?>"
 									   title="<?php echo esc_attr( rtmedia_album_name() ); ?>"><?php echo esc_html( rtmedia_album_name() ); ?></a>
 								</span>
@@ -54,12 +75,10 @@
 			</div>
 
 			<div class="rtmedia-single-meta rtm-single-meta">
-
+			<div class="rtmedia-scroll">
 				<?php if ( $rt_ajax_request ) { ?>
 
-					<div class="rtm-single-meta-contents<?php if ( is_user_logged_in() ) {
-						echo esc_attr( ' logged-in' );
-} ?>">
+					<div class="rtm-single-meta-contents<?php if ( is_user_logged_in() ) { echo esc_attr( ' logged-in' ); } ?>">
 
 						<div class="rtm-user-meta-details">
 							<div class="userprofile rtm-user-avatar">
@@ -93,22 +112,29 @@
 							<div class="rtmedia-item-comments">
 								<div class="rtmedia-actions-before-comments clearfix">
 									<?php do_action( 'rtmedia_actions_before_comments' ); ?>
-									<?php if ( is_user_logged_in() ) { ?>
-										<span><a href='#'
-										         class='rtmedia-comment-link'><?php esc_html_e( 'Comment', 'buddypress-media' ); ?></a></span>
-									<?php } ?>
 								</div>
-								<div class="rtm-like-comments-info">
+								<div class="rtm-like-comments-info <?php echo esc_attr( $class ) ?>">
 									<?php show_rtmedia_like_counts(); ?>
 									<div class="rtmedia-comments-container">
 										<?php rtmedia_comments(); ?>
 									</div>
 								</div>
 							</div>
+						<?php } else { ?>
+							<div class="rtmedia-item-comments">
+								<div class="rtmedia-actions-before-comments clearfix">
+									<div class="like-button-no-comments">
+										<?php do_action( 'like_button_no_comments' ); ?>
+									</div>
+								</div>
+								<div class="rtm-like-comments-info <?php echo esc_attr( $class ) ?>">
+									<?php show_rtmedia_like_counts(); ?>
+								</div>
+							</div>
 						<?php } ?>
 
-
 					</div>
+
 					<?php if ( rtmedia_comments_enabled() && is_user_logged_in() ) { ?>
 						<div class='rtm-media-single-comments'>
 							<?php rtmedia_comment_form(); ?>
@@ -136,13 +162,9 @@
 						<div class="rtmedia-item-comments">
 							<div class="rtmedia-actions-before-comments clearfix">
 								<?php do_action( 'rtmedia_actions_before_comments' ); ?>
-								<?php if ( is_user_logged_in() ) { ?>
-									<span><a href='#'
-									         class='rtmedia-comment-link'><?php esc_html_e( 'Comment', 'buddypress-media' ); ?></a></span>
-								<?php } ?>
 							</div>
 
-							<div class="rtm-like-comments-info">
+							<div class="rtm-like-comments-info <?php echo esc_attr( $class ) ?>">
 								<?php show_rtmedia_like_counts(); ?>
 								<div class="rtmedia-comments-container">
 									<?php rtmedia_comments(); ?>
@@ -158,11 +180,14 @@
 
 					<?php } ?>
 				<?php } ?>
+
+				<?php do_action( 'rtmedia_actions_after_comments_form' ); ?>
+			</div>
 			</div>
 
 		<?php else : ?>
 			<p class="rtmedia-no-media-found"><?php
-				esc_html_e( apply_filters( 'rtmedia_no_media_found_message_filter', 'Sorry !! There\'s no media found for the request !!' ), 'buddypress-media' );
+				apply_filters( 'rtmedia_no_media_found_message_filter', esc_html_e( 'Sorry !! There\'s no media found for the request !!','buddypress-media' ) );
 				?>
 			</p>
 		<?php endif; ?>

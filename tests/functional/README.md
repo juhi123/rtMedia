@@ -13,6 +13,7 @@ Running tests:
 
 * $```npm install```
 
+
 * configure `res/constants.js`
 
     `change site admin username/password`
@@ -34,3 +35,19 @@ Running tests:
  Run to test
 
  $```nightwatch```
+
+
+ Or
+
+
+**For Dockerized Headless test runner**
+
+ * To build Docker Image with Nightwatchjs dependencies:
+ 
+ $```docker build -t test/nightwatch-xvfb .```
+
+ * Run Test Suite (run from `./tests/functional/` directory):
+ 
+ $```docker run -i --rm -v $(pwd):/test/ --name nightwatch-rtmedia test/nightwatch-xvfb  bash -c "npm install && xvfb-run --server-args='-screen 0, 1624x1068x24' nightwatch --group src/"```
+
+*Note: change site's URL and admin username/password with actual data.*

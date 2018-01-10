@@ -43,28 +43,32 @@ if ( ! class_exists( 'RTMediaSettings' ) ) {
 			$options = $rtmedia->options;
 
 			$defaults = array(
-				'general_enableAlbums'        => 1,
-				'general_enableComments'      => 0,
-				'general_downloadButton'      => 0,
-				'general_enableLightbox'      => 1,
-				'general_perPageMedia'        => 10,
-				'general_display_media'       => 'load_more',
-				'general_enableMediaEndPoint' => 0,
-				'general_showAdminMenu'       => 0,
-				'general_videothumbs'         => 2,
-				'general_jpeg_image_quality'  => 90,
-				'general_uniqueviewcount'     => 0,
-				'general_viewcount'           => 0,
-				'general_AllowUserData'       => 1,
-				'rtmedia_add_linkback'        => 0,
-				'rtmedia_affiliate_id'        => '',
-				'rtmedia_enable_api'          => 0,
-				'general_masonry_layout'      => 0,
-				'general_direct_upload'       => 0,
+				'general_enableAlbums'              => 1,
+				'general_enableAlbums_description'  => 0,
+				'general_enableComments'            => 0,
+				'general_enableGallerysearch'       => 0,
+				'general_enableLikes'               => 1,
+				'general_downloadButton'            => 0,
+				'general_enableLightbox'            => 1,
+				'general_perPageMedia'              => 10,
+				'general_display_media'             => 'load_more',
+				'general_enableMediaEndPoint'       => 0,
+				'general_showAdminMenu'             => 0,
+				'general_videothumbs'               => 2,
+				'general_jpeg_image_quality'        => 90,
+				'general_uniqueviewcount'           => 0,
+				'general_viewcount'                 => 0,
+				'general_AllowUserData'             => 1,
+				'rtmedia_add_linkback'              => 0,
+				'rtmedia_affiliate_id'              => '',
+				'rtmedia_enable_api'                => 0,
+				'general_masonry_layout'            => 0,
+				'general_masonry_layout_activity'   => 0,
+				'general_direct_upload'             => 0,
 			);
 
 			foreach ( $rtmedia->allowed_types as $type ) {
-				// invalid keys handled in sanitize method
+				// invalid keys handled in sanitize method.
 				$defaults[ 'allowedTypes_' . $type['name'] . '_enabled' ]  = 0;
 				$defaults[ 'allowedTypes_' . $type['name'] . '_featured' ] = 0;
 			}
@@ -85,6 +89,7 @@ if ( ! class_exists( 'RTMediaSettings' ) ) {
 
 			$defaults['buddypress_enableOnGroup']        = 1;
 			$defaults['buddypress_enableOnActivity']     = 1;
+			$defaults['buddypress_enableOnComment']      = 1;
 			$defaults['buddypress_enableOnProfile']      = 1;
 			$defaults['buddypress_limitOnActivity']      = 0;
 			$defaults['buddypress_enableNotification']   = 0;
@@ -92,6 +97,9 @@ if ( ! class_exists( 'RTMediaSettings' ) ) {
 			$defaults['buddypress_mediaCommentActivity'] = 0;
 			$defaults['styles_custom']                   = '';
 			$defaults['styles_enabled']                  = 1;
+
+			/* default value for add media in comment media */
+			$defaults['rtmedia_disable_media_in_commented_media']      = 1;
 
 			if ( isset( $options['general_videothumbs'] ) && is_numeric( $options['general_videothumbs'] ) && intval( $options['general_videothumbs'] ) > 10 ) {
 				$defaults['general_videothumbs'] = 10;
@@ -148,6 +156,26 @@ if ( ! class_exists( 'RTMediaSettings' ) ) {
 				}
 			}
 
+			/* Check if @import is inserted into css or not. If yes then remove that line before save. */
+			if ( isset( $options['styles_custom'] ) && ! empty( $options['styles_custom'] ) ) {
+				$css = $options['styles_custom'];
+
+				/**
+				 * Filters css validation status whether apply it or not.
+				 * Return true if you want to validate css.
+				 *
+				 * @param bool false By default do not apply validation.
+				 */
+				$apply_css_validation = apply_filters( 'rtmedia_css_validation', false );
+
+				if ( true === $apply_css_validation && preg_match( '/@import\s*(url)?\s*\(?([^;]+?)\)?;/', $css, $matches ) ) {
+					$removable_line = $matches[0];
+					if ( ! empty( $removable_line ) ) {
+						$options['styles_custom'] = str_replace( $removable_line, '', $css );
+					}
+				}
+			}
+
 			if ( isset( $options['general_videothumbs'] ) && intval( $options['general_videothumbs'] ) > 10 ) {
 				$options['general_videothumbs'] = 10;
 			}
@@ -187,7 +215,7 @@ if ( ! class_exists( 'RTMediaSettings' ) ) {
 			$rtmedia->options = $options;
 			// Save Settings first then proceed.
 			$rtmedia_option_save = filter_input( INPUT_POST, 'rtmedia-options-save', FILTER_SANITIZE_STRING );
-			if ( isset( $rtmedia_option_save ) ) {
+			if ( isset( $rtmedia_option_save ) && current_user_can( 'manage_options' ) ) {
 				$options               = filter_input( INPUT_POST, 'rtmedia-options', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 				$options               = $this->sanitize_before_save_options( $options );
 				$options               = apply_filters( 'rtmedia_pro_options_save_settings', $options );
@@ -356,7 +384,7 @@ if ( ! class_exists( 'RTMediaSettings' ) ) {
 			} else {
 				$regenerate_link = wp_nonce_url( admin_url( 'update.php?action=install-plugin&plugin=regenerate-thumbnails' ), 'install-plugin_regenerate-thumbnails' );
 			}
-			echo '<span class="description">' . esc_html__( 'If you make changes to width, height or crop settings, you must use ', 'buddypress-media' ).
+			echo '<span class="description">' . esc_html__( 'If you make changes to width, height or crop settings, you must use ', 'buddypress-media' ) .
 				'<a href="' . esc_url( $regenerate_link ) . '">' . esc_html__( 'Regenerate Thumbnail Plugin', 'buddypress-media' ) . '</a>' .
 				esc_html__( ' to regenerate old images.', 'buddypress-media' ) .
 				'</span>';
