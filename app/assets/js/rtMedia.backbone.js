@@ -469,6 +469,16 @@ jQuery( function( $ ) {
 			},
 			initialize: function( config ) {
 				this.uploader = new plupload.Uploader( config );
+				/*
+				* 'ext_enabled' will get value of enabled media types if nothing is enabled,
+				* then an error message will be displayed.
+				*/
+				var ext_enabled = config.filters[0].extensions.length;
+				if ( ext_enabled === 0 ) {
+						this.uploader.bind( 'Browse', function( up ) {
+							rtmedia_gallery_action_alert_message( rtmedia_media_disabled_error_message, 'warning' );
+						} );
+				}
 			},
 			render: function() {
 
@@ -839,6 +849,8 @@ jQuery( function( $ ) {
 			} );
 		} else {
 			jQuery( document ).on( 'click', '#rtm_show_upload_ui', function() {
+				// If no media type is enabled error message will be displayed.
+				rtmedia_gallery_action_alert_message( rtmedia_media_disabled_error_message, 'warning' );
 				jQuery( '#rtm-media-gallery-uploader' ).slideToggle();
 				jQuery( '#rtm_show_upload_ui' ).toggleClass( 'primary' );
 			} );
@@ -1353,7 +1365,9 @@ jQuery( document ).ready( function( $ ) {
 						//$("#div-attache-rtmedia").hide();
 						apply_rtMagnificPopup( jQuery( '.rtmedia-list-media, .rtmedia-activity-container ul.rtmedia-list, #bp-media-list,.widget-item-listing,.bp-media-sc-list, li.media.album_updated ul,ul.bp-media-list-media, li.activity-item div.activity-content div.activity-inner div.bp_media_content' ) );
 						jQuery( 'ul.activity-list li.rtmedia_update:first-child .wp-audio-shortcode, ul.activity-list li.rtmedia_update:first-child .wp-video-shortcode' ).mediaelementplayer( {
-							// If the <video width> is not specified, this is the default
+							// This is required to work with new MediaElement version.
+                                                        classPrefix: 'mejs-',
+                                                        // If the <video width> is not specified, this is the default
 							defaultVideoWidth: 480,
 							// If the <video height> is not specified, this is the default
 							defaultVideoHeight: 270
@@ -1787,7 +1801,9 @@ jQuery(document).ready(function($) {
 
 function rtmedia_reset_video_and_audio(){
 	jQuery( 'ul.activity-list li.activity-item div.rtmedia-item-thumbnail > audio.wp-audio-shortcode, ul.activity-list li.activity-item div.rtmedia-item-thumbnail > video.wp-video-shortcode' ).mediaelementplayer( {
-		// If the <video width> is not specified, this is the default
+		// This is required to work with new MediaElement version.
+                classPrefix: 'mejs-',
+                // If the <video width> is not specified, this is the default
 		defaultVideoWidth: 480,
 		// If the <video height> is not specified, this is the default
 		defaultVideoHeight: 270
@@ -1821,7 +1837,9 @@ function rtmedia_single_page_popup_close(){
 
 function rtmedia_reset_video_and_audio_for_popup(){
 	jQuery( '.rtm-lightbox-container .rtmedia-comments-container ul.rtm-comment-list li.rtmedia-comment div.rtmedia-item-thumbnail > audio.wp-audio-shortcode, .rtm-lightbox-container .rtmedia-comments-container ul.rtm-comment-list li.rtmedia-comment div.rtmedia-item-thumbnail > video.wp-video-shortcode' ).mediaelementplayer( {
-		// If the <video width> is not specified, this is the default
+		// This is required to work with new MediaElement version.
+                classPrefix: 'mejs-',
+                // If the <video width> is not specified, this is the default
 		defaultVideoWidth: 200,
 		// If the <video height> is not specified, this is the default
 		defaultVideoHeight: 200
