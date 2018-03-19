@@ -5,7 +5,7 @@ namespace Page;
 class Constants {
 
 	// Username and Password
-	public static $userName = 'ADMINPASS';
+	public static $userName = 'ADMINUSER';
 	public static $password = 'ADMINPASS';
 
 	// Media files Name with path
