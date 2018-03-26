@@ -15,8 +15,13 @@
 	$loginPage->loginAsAdmin( ConstantsPage::$userName, ConstantsPage::$password );
 
 	$settings = new DashboardSettingsPage( $I );
-	$settings->gotoSettings( ConstantsPage::$buddypressSettingsUrl );
 	$settings->enableBPGroupComponent();
+	$settings->gotoSettings( ConstantsPage::$buddypressSettingsUrl );
+<<<<<<< HEAD
+	$settings->enableBPGroupComponent();
+=======
+	
+>>>>>>> 1bd7241c18bd763089d13bafe20a8034e291801a
 
 	$verifyEnableStatusOfMediaInGroupCheckbox = $settings->verifyStatus( ConstantsPage::$strEnableMediaInGrpLabel, ConstantsPage::$enableMediaInGrpCheckbox );
 	if ( $verifyEnableStatusOfMediaInGroupCheckbox ) {
